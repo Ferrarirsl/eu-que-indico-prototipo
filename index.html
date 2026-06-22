@@ -1561,6 +1561,50 @@ body[data-mode="web"] .req-prio{display:none}
   100%{transform:translateY(100vh) rotate(540deg);opacity:0}
 }
 
+/* ============================================================
+   APP MODE — Acesso via mobile ou ?app=1
+   Esconde o chrome do demo (topbar, aside, frame de telefone)
+   e mostra apenas a aplicação em tela cheia.
+   ============================================================ */
+body[data-app-mode] {
+  padding: 0 !important;
+  background: #041B33 !important;
+}
+body[data-app-mode] #topbar,
+body[data-app-mode] #aside,
+body[data-app-mode] .notch,
+body[data-app-mode] .browserbar { display: none !important; }
+body[data-app-mode] #stage { gap: 0; }
+body[data-app-mode] #device {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+body[data-app-mode] #appbar {
+  padding-top: calc(42px + env(safe-area-inset-top, 0px)) !important;
+}
+body[data-app-mode] #bottomnav {
+  padding-bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Auto app-mode em telas estreitas (mobile via QR) */
+@media (max-width: 820px) {
+  body { padding: 0 !important; background: #041B33 !important; }
+  #topbar, #aside, .notch, .browserbar { display: none !important; }
+  #stage { gap: 0; }
+  #device {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  #appbar { padding-top: calc(42px + env(safe-area-inset-top, 0px)) !important; }
+  #bottomnav { padding-bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+
 </style>
 </head>
 <body data-mode="web">
@@ -2772,6 +2816,21 @@ document.addEventListener('click', e=>{
   const c = e.target.closest('#attr-chips .attr-chip');
   if(c) c.classList.toggle('sel');
 });
+
+/* ============================================================
+   APP-MODE DETECTION — abre direto no app quando vem do QR (mobile)
+   ============================================================ */
+(function(){
+  var qs = new URLSearchParams(location.search);
+  var forceApp = qs.get('app') === '1';
+  var forceDemo = qs.get('demo') === '1';
+  var isMobileUA = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  var isNarrow = window.matchMedia('(max-width: 820px)').matches;
+  if((forceApp || isMobileUA || isNarrow) && !forceDemo){
+    document.body.setAttribute('data-app-mode','true');
+    document.body.setAttribute('data-mode','mobile');
+  }
+})();
 
 /* ============================================================
    INIT
