@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kanban do Roadmap EQI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #85C606;
+    --green-deep: #4C7A0A;
+    --green-soft: #D3EE9A;
+    --green-bg: #F2FADD;
+    --navy: #041B33;
+    --navy-soft: #0B2C4A;
+    --navy-mute: #1E3A5C;
+    --paper: #F5F7FA;
+    --card: #FFFFFF;
+    --line: #E1E7ED;
+    --line-soft: #EEF2F6;
+    --text: #0F1E2E;
+    --text-body: #2A3B4E;
+    --text-soft: #566779;
+    --text-mute: #8395A5;
+    --amber: #B4770A;
+    --amber-bg: #FCF3DF;
+    --amber-soft: #F5D68C;
+    --amber-deep: #92400E;
+    --amber-deep-bg: #FEF3C7;
+    --blue: #0F6ABF;
+    --blue-bg: #E0EEFB;
+    --blue-soft: #A9CFED;
+    --purple: #6D28D9;
+    --purple-bg: #EDE9FE;
+    --purple-soft: #C4B5FD;
+    --teal: #0D7469;
+    --teal-bg: #CCFBF1;
+    --teal-soft: #5EEAD4;
+    --red: #B12A2A;
+    --red-bg: #FBE6E6;
+    --gray: #6C7887;
+    --gray-bg: #EDF0F3;
+    --font-heading: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  ::selection { background: var(--green); color: var(--navy); }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    color: #fff;
+    padding: 28px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .brand-mark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--green);
+  }
+  .brand-mark .name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .brand-mark .name span { color: var(--green); }
+
+  header h1 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 22px;
+    margin: 6px 0 2px;
+    letter-spacing: -0.005em;
+  }
+  header .sub {
+    margin: 0;
+    font-size: 12.5px;
+    color: #C8D6E4;
+    max-width: 60ch;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  button {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
+  button:active { transform: translateY(0); }
+  button.primary {
+    background: var(--green);
+    color: var(--navy);
+    border-color: var(--green);
+  }
+  button.primary:hover { background: #A5E633; }
+  button.ghost {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,0.28);
+  }
+  button.ghost:hover { background: rgba(255,255,255,0.10); }
+  button.danger {
+    background: transparent;
+    color: #FFB4B4;
+    border-color: rgba(255,180,180,0.3);
+  }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 108px;
+    z-index: 20;
+  }
+  .filters {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filters .lbl {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-right: 4px;
+  }
+  .filter-chip {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--line-soft);
+    color: var(--text-soft);
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .filter-chip:hover { border-color: var(--green-soft); color: var(--navy); }
+  .filter-chip.active {
+    background: var(--navy);
+    color: #fff;
+  }
+  .counters {
+    font-size: 12px;
+    color: var(--text-soft);
+    font-family: var(--font-mono);
+  }
+  .counters strong { color: var(--navy); font-weight: 700; }
+
+  /* ---------- Board ---------- */
+  .board-wrap {
+    padding: 24px 32px 60px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .board {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(210px, 1fr));
+    gap: 12px;
+    align-items: start;
+    min-width: 1980px;
+    margin: 0 auto;
+    max-width: 2100px;
+  }
+  @media (max-width: 640px) {
+    .board-wrap { padding: 20px 16px 60px; }
+    .toolbar { padding: 12px 16px; }
+    header { padding: 20px 16px; }
+  }
+
+  .column {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 240px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .column.drop-target {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(133, 198, 6, 0.20);
+  }
+  .column-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--line-soft);
+  }
+  .column-head h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--navy);
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .column-head .count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--line-soft);
+    color: var(--text-soft);
+    min-width: 26px;
+    text-align: center;
+  }
+
+  /* Cores por raia — fluxo do produto */
+  .column[data-col="backlog"] .column-head { border-bottom-color: var(--gray-bg); }
+  .column[data-col="backlog"] h2 { color: var(--gray); }
+  .column[data-col="backlog"] h2::before { content: "📋 "; }
+  .column[data-col="backlog"] .count { background: var(--gray-bg); color: var(--gray); }
+
+  .column[data-col="priorizada"] { border-top: 3px solid var(--green-soft); }
+  .column[data-col="priorizada"] .column-head { border-bottom-color: var(--green-soft); }
+  .column[data-col="priorizada"] h2 { color: var(--green-deep); }
+  .column[data-col="priorizada"] h2::before { content: "🎯 "; }
+  .column[data-col="priorizada"] .count { background: var(--green-bg); color: var(--green-deep); }
+
+  .column[data-col="refinamento"] { border-top: 3px solid var(--amber); }
+  .column[data-col="refinamento"] .column-head { border-bottom-color: var(--amber-soft); }
+  .column[data-col="refinamento"] h2 { color: var(--amber); }
+  .column[data-col="refinamento"] h2::before { content: "🔍 "; }
+  .column[data-col="refinamento"] .count { background: var(--amber-bg); color: var(--amber); }
+
+  .column[data-col="aguardando"] { border-top: 3px solid var(--purple); }
+  .column[data-col="aguardando"] .column-head { border-bottom-color: var(--purple-soft); }
+  .column[data-col="aguardando"] h2 { color: var(--purple); }
+  .column[data-col="aguardando"] h2::before { content: "⏸ "; }
+  .column[data-col="aguardando"] .count { background: var(--purple-bg); color: var(--purple); }
+
+  .column[data-col="aprovada"] { border-top: 3px solid var(--green-deep); }
+  .column[data-col="aprovada"] .column-head { border-bottom-color: var(--green-soft); }
+  .column[data-col="aprovada"] h2 { color: var(--green-deep); }
+  .column[data-col="aprovada"] h2::before { content: "✅ "; }
+  .column[data-col="aprovada"] .count { background: var(--green-bg); color: var(--green-deep); }
+
+  .column[data-col="desenvolvimento"] { border-top: 3px solid var(--blue); }
+  .column[data-col="desenvolvimento"] .column-head { border-bottom-color: var(--blue-soft); }
+  .column[data-col="desenvolvimento"] h2 { color: var(--blue); }
+  .column[data-col="desenvolvimento"] h2::before { content: "⚙ "; }
+  .column[data-col="desenvolvimento"] .count { background: var(--blue-bg); color: var(--blue); }
+
+  .column[data-col="qa"] { border-top: 3px solid var(--teal); }
+  .column[data-col="qa"] .column-head { border-bottom-color: var(--teal-soft); }
+  .column[data-col="qa"] h2 { color: var(--teal); }
+  .column[data-col="qa"] h2::before { content: "🧪 "; }
+  .column[data-col="qa"] .count { background: var(--teal-bg); color: var(--teal); }
+
+  .column[data-col="homologacao"] { border-top: 3px solid var(--amber-deep); }
+  .column[data-col="homologacao"] .column-head { border-bottom-color: var(--amber-soft); }
+  .column[data-col="homologacao"] h2 { color: var(--amber-deep); }
+  .column[data-col="homologacao"] h2::before { content: "👁 "; }
+  .column[data-col="homologacao"] .count { background: var(--amber-deep-bg); color: var(--amber-deep); }
+
+  .column[data-col="producao"] { border-top: 3px solid var(--green); background: linear-gradient(180deg, var(--green-bg) 0%, #fff 60%); }
+  .column[data-col="producao"] .column-head { border-bottom-color: var(--green); }
+  .column[data-col="producao"] h2 { color: var(--green-deep); }
+  .column[data-col="producao"] h2::before { content: "🚀 "; }
+  .column[data-col="producao"] .count { background: var(--green); color: var(--navy); font-weight: 800; }
+
+  .col-sub {
+    font-size: 10.5px;
+    color: var(--text-mute);
+    font-weight: 500;
+    margin-top: 2px;
+    line-height: 1.35;
+  }
+
+  .cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 60px;
+  }
+  .cards-container:empty::after {
+    content: "arraste cards aqui";
+    display: block;
+    padding: 22px 10px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-mute);
+    font-style: italic;
+    border: 1.5px dashed var(--line);
+    border-radius: 8px;
+  }
+
+  /* ---------- Card ---------- */
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    cursor: grab;
+    transition: all 0.12s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    user-select: none;
+  }
+  .card:hover {
+    border-color: var(--green-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.4; }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .card-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-mute);
+    background: var(--line-soft);
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+  .card-phase {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .card-phase.phase-15 { background: #FFF4E5; color: #B4770A; }
+  .card-phase.phase-2 { background: var(--green-bg); color: var(--green-deep); }
+  .card-phase.phase-3 { background: var(--blue-bg); color: var(--blue); }
+  .card-phase.phase-4 { background: #F4E4FE; color: #6B3EA6; }
+  .card-phase.phase-5 { background: #E5F4F0; color: #0A6B5A; }
+  .card-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    line-height: 1.3;
+    margin: 0;
+  }
+  .card-summary {
+    font-size: 11.5px;
+    color: var(--text-soft);
+    line-height: 1.4;
+  }
+  .card-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .nav-btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 10.5px;
+    padding: 7px 6px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--navy);
+    cursor: pointer;
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    line-height: 1;
+    user-select: none;
+    white-space: nowrap;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-btn:not(:disabled):hover {
+    background: var(--green);
+    color: var(--navy);
+    border-color: var(--green);
+    transform: translateY(-1px);
+  }
+  .nav-btn:not(:disabled):active { transform: translateY(0); }
+  .nav-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: transparent;
+  }
+  .nav-btn .arrow { font-size: 12px; font-weight: 700; }
+  .nav-btn.nav-back { color: var(--text-soft); }
+  .nav-btn.nav-fwd { color: var(--green-deep); border-color: var(--green-soft); background: var(--green-bg); }
+  .nav-btn.nav-fwd:not(:disabled):hover { background: var(--green); color: var(--navy); }
+
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+  }
+  .card-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-soft);
+    letter-spacing: 0.02em;
+  }
+  .card-tag::before {
+    content: "●";
+    color: var(--green);
+    margin-right: 4px;
+  }
+  .card-info {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--green-deep);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .card-info:hover { text-decoration: underline; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 27, 51, 0.72);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+  }
+  .modal-head {
+    padding: 26px 30px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .modal-head h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--navy);
+    margin: 6px 0 0;
+    line-height: 1.25;
+  }
+  .modal-meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .modal-close {
+    background: var(--line-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 18px;
+    color: var(--text-soft);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex: none;
+  }
+  .modal-close:hover { background: var(--line); color: var(--navy); }
+  .modal-body {
+    padding: 20px 30px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .modal-section h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 11.5px;
+    color: var(--green-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 6px;
+  }
+  .modal-section p {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-body);
+    line-height: 1.6;
+  }
+  .modal-section ul {
+    margin: 4px 0 0;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--text-body);
+    line-height: 1.6;
+  }
+  .modal-section ul li { margin-bottom: 4px; }
+
+  /* ---------- Overlay de instrução ---------- */
+  .instruction-banner {
+    background: linear-gradient(135deg, var(--green-bg) 0%, #FDFEF7 100%);
+    border-left: 4px solid var(--green-deep);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 12.5px;
+    color: var(--text-body);
+    margin-bottom: 16px;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .instruction-banner strong { color: var(--navy); }
+  .instruction-banner .icons {
+    display: inline-flex;
+    gap: 8px;
+    margin-right: 8px;
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    header { position: static; }
+    .toolbar, .header-actions button { display: none; }
+    body { background: #fff; }
+    .board { grid-template-columns: repeat(5, 1fr) !important; }
+    .column { break-inside: avoid; page-break-inside: avoid; }
+    .card { break-inside: avoid; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="brand-mark">
+        <span class="dot"></span>
+        <span class="name">EU QUE <span>INDICO</span></span>
+      </div>
+      <h1>Kanban do Roadmap · Backlog → Produção</h1>
+      <p class="sub">Fluxo completo do produto: arraste cada requisito para a raia em que ele está hoje. Estado salvo automaticamente no seu navegador — clique em "Copiar" quando quiser compartilhar.</p>
+    </div>
+    <div class="header-actions">
+      <button class="ghost" id="btn-reset">↺ Resetar</button>
+      <button class="ghost" id="btn-print">🖨 Imprimir</button>
+      <button class="primary" id="btn-export">📋 Copiar status</button>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="filters">
+    <span class="lbl">Filtrar por fase:</span>
+    <span class="filter-chip active" data-filter="all">Todas</span>
+    <span class="filter-chip" data-filter="1.5">Fase 1.5 · Dívidas</span>
+    <span class="filter-chip" data-filter="2">Fase 2</span>
+    <span class="filter-chip" data-filter="3">Fase 3</span>
+    <span class="filter-chip" data-filter="4">Fase 4</span>
+    <span class="filter-chip" data-filter="5">Fase 5</span>
+  </div>
+  <div class="counters" id="counters">
+    <span><strong id="c-total">24</strong> requisitos · <strong id="c-backlog">24</strong> no backlog · <strong id="c-flow">0</strong> em fluxo · <strong id="c-live">0</strong> em produção</span>
+  </div>
+</div>
+
+<div class="instruction-banner">
+  <span class="icons">📋 → 🎯 → 🔍 → ⏸ → ✅ → ⚙ → 🧪 → 👁 → 🚀</span>
+  <strong>Fluxo de trabalho:</strong>
+  <strong>Backlog</strong> (item ainda não priorizado) →
+  <strong>Priorizada</strong> (dono do produto marcou "vamos fazer") →
+  <strong>Em refinamento</strong> (detalhando escopo e aceite) →
+  <strong>Aguardando aprovação</strong> (esperando OK do cliente) →
+  <strong>Aprovada</strong> (pronta para dev) →
+  <strong>Em desenvolvimento</strong> →
+  <strong>QA</strong> →
+  <strong>Homologação</strong> →
+  <strong>Em produção</strong>. Clique em "Detalhes →" no card para ver o escopo completo.
+</div>
+
+<div class="board-wrap">
+  <div class="board" id="board">
+
+    <div class="column" data-col="backlog">
+      <div class="column-head">
+        <div>
+          <h2>Backlog</h2>
+          <div class="col-sub">ainda não priorizado</div>
+        </div>
+        <span class="count" data-count="backlog">0</span>
+      </div>
+      <div class="cards-container" data-container="backlog"></div>
+    </div>
+
+    <div class="column" data-col="priorizada">
+      <div class="column-head">
+        <div>
+          <h2>Priorizada</h2>
+          <div class="col-sub">PO marcou "vamos fazer"</div>
+        </div>
+        <span class="count" data-count="priorizada">0</span>
+      </div>
+      <div class="cards-container" data-container="priorizada"></div>
+    </div>
+
+    <div class="column" data-col="refinamento">
+      <div class="column-head">
+        <div>
+          <h2>Em refinamento</h2>
+          <div class="col-sub">detalhando escopo e aceite</div>
+        </div>
+        <span class="count" data-count="refinamento">0</span>
+      </div>
+      <div class="cards-container" data-container="refinamento"></div>
+    </div>
+
+    <div class="column" data-col="aguardando">
+      <div class="column-head">
+        <div>
+          <h2>Aguardando aprovação</h2>
+          <div class="col-sub">esperando OK do cliente</div>
+        </div>
+        <span class="count" data-count="aguardando">0</span>
+      </div>
+      <div class="cards-container" data-container="aguardando"></div>
+    </div>
+
+    <div class="column" data-col="aprovada">
+      <div class="column-head">
+        <div>
+          <h2>Aprovada</h2>
+          <div class="col-sub">pronta para dev</div>
+        </div>
+        <span class="count" data-count="aprovada">0</span>
+      </div>
+      <div class="cards-container" data-container="aprovada"></div>
+    </div>
+
+    <div class="column" data-col="desenvolvimento">
+      <div class="column-head">
+        <div>
+          <h2>Em desenvolvimento</h2>
+          <div class="col-sub">consultor construindo</div>
+        </div>
+        <span class="count" data-count="desenvolvimento">0</span>
+      </div>
+      <div class="cards-container" data-container="desenvolvimento"></div>
+    </div>
+
+    <div class="column" data-col="qa">
+      <div class="column-head">
+        <div>
+          <h2>QA</h2>
+          <div class="col-sub">testes e validação técnica</div>
+        </div>
+        <span class="count" data-count="qa">0</span>
+      </div>
+      <div class="cards-container" data-container="qa"></div>
+    </div>
+
+    <div class="column" data-col="homologacao">
+      <div class="column-head">
+        <div>
+          <h2>Homologação</h2>
+          <div class="col-sub">cliente validando entrega</div>
+        </div>
+        <span class="count" data-count="homologacao">0</span>
+      </div>
+      <div class="cards-container" data-container="homologacao"></div>
+    </div>
+
+    <div class="column" data-col="producao">
+      <div class="column-head">
+        <div>
+          <h2>Em produção</h2>
+          <div class="col-sub">disponível para o usuário</div>
+        </div>
+        <span class="count" data-count="producao">0</span>
+      </div>
+      <div class="cards-container" data-container="producao"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal de detalhes -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-meta" id="modal-meta"></div>
+        <h3 id="modal-title">—</h3>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h4>Descrição</h4>
+        <p id="modal-desc">—</p>
+      </div>
+      <div class="modal-section">
+        <h4>O que resolve para o negócio</h4>
+        <p id="modal-value">—</p>
+      </div>
+      <div class="modal-section">
+        <h4>Regras / observações</h4>
+        <ul id="modal-rules"></ul>
+      </div>
+      <div class="modal-section">
+        <h4>Dependências / riscos</h4>
+        <p id="modal-deps">—</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de exportação -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal" style="max-width: 780px;">
+    <div class="modal-head">
+      <div>
+        <div style="font-size: 11.5px; color: var(--green-deep); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;">Exportar</div>
+        <h3 style="font-family: var(--font-heading); font-weight: 700; font-size: 20px; color: var(--navy); margin: 0;">Status atual do roadmap em CSV</h3>
+      </div>
+      <button class="modal-close" onclick="closeExportModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <p style="font-size: 13px; color: var(--text-body); margin-bottom: 12px;">
+          Copie o texto abaixo e cole no <strong>Google Sheets</strong>, <strong>Excel</strong> ou envie por <strong>e-mail</strong> para o time do EQI.
+          O arquivo está ordenado do mais adiantado para o mais atrasado (Em produção → Homologação → QA → Dev → Aprovada → Aguardando → Refinamento → Priorizada → Backlog).
+        </p>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+          <button class="primary" id="btn-copy-csv" style="padding: 9px 18px;">📋 Copiar tudo</button>
+          <span id="copy-feedback" style="font-size: 12px; color: var(--green-deep); font-weight: 600; align-self: center; opacity: 0; transition: opacity 0.2s ease;">✓ Copiado para a área de transferência</span>
+        </div>
+        <textarea id="csv-output" readonly
+          style="width: 100%; height: 320px; padding: 14px; font-family: var(--font-mono); font-size: 11.5px; line-height: 1.5; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--text-body); resize: vertical; box-sizing: border-box;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// BASE DE REQUISITOS — 25 itens
+// ============================================
+const REQUIREMENTS = [
+  // ==================== FASE 1.5 · Dívidas técnicas ====================
+  // ✅ DIV-01 · Credenciais OAuth Google — ENTREGUE (removido do backlog em set/2026)
+  {
+    id: "DIV-02", phase: "1.5", phaseLabel: "Fase 1.5",
+    title: "Credenciais OAuth Meta (Facebook/Instagram)",
+    tag: "Integração externa",
+    summary: "Cadastrar o EQI no Meta Business para destravar 'Entrar com Facebook/Instagram'. Fecha o RF-02 completo. ⚠️ Revisão externa demora 2–4 semanas.",
+    value: "Consumidor conectado ao Facebook/Instagram entra sem criar senha. Meta autentica também identidade social — reduz spam e fake accounts.",
+    rules: [
+      "Cadastro no Meta for Developers",
+      "Revisão pela equipe da Meta demora 2 a 4 semanas",
+      "Priorizar cedo se quiser 'Entrar com Facebook' no dia do lançamento comercial",
+      "1h de sessão com pessoa autorizada do EQI + follow-up conforme revisão avança"
+    ],
+    deps: "Risco: tempo de revisão externo, fora do nosso controle. Recomendamos iniciar o processo mesmo se ainda não priorizado no MoSCoW final."
+  },
+  {
+    id: "DIV-03", phase: "1.5", phaseLabel: "Fase 1.5",
+    title: "Perfil público /u/[handle] com opt-in",
+    tag: "Privacidade & Descoberta",
+    summary: "Consumidor decide se quer perfil público visível a visitantes. Fecha o RF-21 completo (retirado da Fase 1 por conflito com a Seção 10).",
+    value: "Amplia viralidade — consumidor compartilha o próprio perfil como referência ('vejam as marcas que eu indico'). Amarra identidade digital do consumidor ao EQI.",
+    rules: [
+      "Opt-in explícito e reversível (LGPD)",
+      "Consumidor escolhe o que expor: indicações, marcas favoritas, atividade",
+      "Dados sensíveis (e-mail, telefone) nunca aparecem",
+      "Handle único e reservado no cadastro"
+    ],
+    deps: "Requer revisão jurídica LGPD do fluxo de opt-in. Pode reabrir na Fase 2 junto com gamificação."
+  },
+  {
+    id: "DIV-04", phase: "1.5", phaseLabel: "Fase 1.5",
+    title: "Cold-start real de marcas",
+    tag: "Conteúdo & Curadoria",
+    summary: "Substituir a lista placeholder atual por marcas reais no ambiente. Sem isso, o EQI abre ao público com nomes fictícios.",
+    value: "Impacto direto na primeira impressão. Consumidor que abre o EQI e vê marcas fictícias tende a não retornar.",
+    rules: [
+      "Cliente define a origem: (a) curadoria manual do time EQI, (b) importação do Google Meu Negócio, (c) base do time comercial ou (d) combinação",
+      "Mínimo recomendado: 200 marcas com boa distribuição por categoria/região",
+      "Não requer código — só conteúdo + carga no banco"
+    ],
+    deps: "Bloqueado até o cliente EQI definir a fonte oficial. Prazo curto (1–2 semanas para 200 marcas curadas)."
+  },
+
+  // ==================== FASE 2 · Gamificação e IA ====================
+  {
+    id: "RF-22", phase: "2", phaseLabel: "Fase 2",
+    title: "Sistema de XP e níveis do consumidor",
+    tag: "Gamificação",
+    summary: "Consumidor acumula XP a cada indicação aprovada. Níveis desbloqueiam badges visuais e reconhecimento. Card já reservado no perfil (RF-21).",
+    value: "Retenção. Consumidor volta ao EQI mesmo sem intenção de indicar — só para ver o próprio progresso. XP também torna o EQI mais viciante socialmente.",
+    rules: [
+      "XP concedido apenas em indicações APROVADAS (não em publicadas)",
+      "Fórmula de níveis a definir com o cliente (curva de crescimento)",
+      "Badges por marcos (1ª indicação, 10 aprovadas, verificado, 5+ categorias)",
+      "Card 'XP e Nível' já foi reservado no perfil na Fase 1 — aguardando ativação"
+    ],
+    deps: "Requer que a moderação (RF-11) esteja em produção estável — o que já ocorreu. Sem dependência externa."
+  },
+  {
+    id: "RF-23", phase: "2", phaseLabel: "Fase 2",
+    title: "Missões e ranking de embaixadores",
+    tag: "Gamificação",
+    summary: "Objetivos periódicos (ex: '5 indicações em 30 dias' → recompensa). Leaderboard público de 'embaixadores' (consumidores mais ativos).",
+    value: "Cria comportamento cíclico — consumidor volta semanalmente para conferir missões novas. Ranking público estimula competição saudável.",
+    rules: [
+      "Missões renovadas semanalmente/mensalmente",
+      "Recompensas simbólicas no MVP (badges, título), monetárias na Fase 3 (planos B2B)",
+      "Leaderboard opt-in — respeita privacidade LGPD",
+      "Depende do RF-22 (XP) estar em produção"
+    ],
+    deps: "Depende de RF-22. Pode ser entregue no mesmo ciclo ou em ciclo seguinte."
+  },
+  {
+    id: "F2-DEL", phase: "2", phaseLabel: "Fase 2",
+    title: "Busca conversacional por IA (Dona Eliana)",
+    tag: "Discovery + IA",
+    summary: "Assistente conversacional para o consumidor descobrir marcas: 'Qual a melhor cafeteria em SP?' ou 'Quero um dermatologista em Campinas'.",
+    value: "Descoberta amigável mesmo para quem não sabe filtrar. Aumenta engajamento e tempo médio na plataforma. Diferencial competitivo forte.",
+    rules: [
+      "Baseada em Love Score + atributos + região",
+      "Fallback para busca tradicional se IA não entender",
+      "Persona 'Dona Eliana' é conversacional, amigável — reflete identidade EQI",
+      "Requer decisão sobre modelo de IA (interno vs externo — custo + LGPD)"
+    ],
+    deps: "Decisão sobre provedor de IA (OpenAI, Anthropic, modelo local). Impacto de custo variável por volume."
+  },
+  {
+    id: "F2-EML", phase: "2", phaseLabel: "Fase 2",
+    title: "E-mails automáticos de engajamento",
+    tag: "Comunicação & Retenção",
+    summary: "Boas-vindas ao cadastrar, 'você subiu de nível', resumo mensal 'suas indicações e novidades das marcas que você segue'. Hoje só há e-mail de verificação.",
+    value: "Reduz churn — consumidor esquecido volta pelo e-mail. Métrica de reativação mensurável (open rate, click rate).",
+    rules: [
+      "Opt-in no cadastro (respeitar LGPD)",
+      "Descadastro em 1 clique obrigatório",
+      "Templates seguem Manual da Marca EQI",
+      "Requer provedor de e-mail transacional definido (SendGrid/SES/Mailgun)"
+    ],
+    deps: "Requer provedor de e-mail transacional. Depende também do RF-22 (XP) para o e-mail 'subiu de nível'."
+  },
+
+  // ==================== FASE 3 · Dashboard B2B ====================
+  {
+    id: "F3-OB", phase: "3", phaseLabel: "Fase 3",
+    title: "Onboarding B2B (auto-cadastro da marca)",
+    tag: "Monetização B2B",
+    summary: "Marca se cadastra sozinha no EQI, valida titularidade, aceita termos B2B. Substitui o CTA placeholder 'em breve' da página da marca (RF-20).",
+    value: "Primeiro passo real de monetização. Sem onboarding, marca não vira cliente pagante.",
+    rules: [
+      "Verificação de titularidade (KYC light: e-mail corporativo, DNS, ou documento)",
+      "Fluxo separado do consumidor (área /marca/entrar)",
+      "Aceite explícito de Termos B2B versionados",
+      "Marca pode 'reivindicar' página existente da Fase 1"
+    ],
+    deps: "Pré-requisito para todos os itens B2B da Fase 3. Precisa de contrato jurídico B2B redigido."
+  },
+  {
+    id: "F3-SUB", phase: "3", phaseLabel: "Fase 3",
+    title: "Assinatura B2B (Starter/Growth/Enterprise)",
+    tag: "Monetização B2B",
+    summary: "Planos pagos mensais/anuais com cobrança recorrente. Feature gating por plano.",
+    value: "Fonte de receita principal do EQI. MRR/ARR passam a existir de verdade.",
+    rules: [
+      "3 planos: Starter (dashboard básico), Growth (analytics), Enterprise (benchmarking + API)",
+      "Cobrança recorrente via gateway (Stripe, Pagar.me, Iugu)",
+      "Trial de 14 dias",
+      "Cancelamento self-service"
+    ],
+    deps: "Depende de F3-OB (Onboarding) + escolha do gateway de pagamento + emissor de NFS-e."
+  },
+  {
+    id: "F3-DASH", phase: "3", phaseLabel: "Fase 3",
+    title: "Dashboard B2B (Love Score, evolução, atributos)",
+    tag: "Monetização B2B",
+    summary: "Marca vê Love Score histórico, evolução mês a mês, atributos mais citados, quem indica (agregado). Painel próprio pela porta B2B.",
+    value: "Justifica a assinatura — a marca precisa ver valor claro para pagar. Este é o produto que a marca compra.",
+    rules: [
+      "Gráficos: evolução do Love Score, distribuição de notas, top atributos",
+      "Segmentação por período, região, categoria",
+      "Export PDF/PNG para uso interno da marca",
+      "Sem exposição de dados pessoais do consumidor"
+    ],
+    deps: "Depende de F3-OB + F3-SUB."
+  },
+  {
+    id: "F3-BENCH", phase: "3", phaseLabel: "Fase 3",
+    title: "Benchmarking (comparação com concorrentes)",
+    tag: "Monetização B2B (Enterprise)",
+    summary: "Marca compara seu Love Score com concorrentes da mesma categoria (anônimo ou nomeado, conforme plano).",
+    value: "Feature diferencial do plano Enterprise. Marca decide se paga mais para ter benchmark competitivo.",
+    rules: [
+      "No plano Growth: benchmark anônimo (posição relativa)",
+      "No plano Enterprise: benchmark nomeado (com concorrentes específicos)",
+      "Marca não pode ver dados internos de outra marca"
+    ],
+    deps: "Depende de F3-DASH."
+  },
+  {
+    id: "F3-NLP", phase: "3", phaseLabel: "Fase 3",
+    title: "NLP avançado (Sentimento completo)",
+    tag: "IA & Precisão",
+    summary: "Substitui a análise por léxico simples (Fase 1) por NLP real (modelo treinado). Melhora precisão do fator Sentimento no Love Score.",
+    value: "Love Score mais preciso → mais credibilidade → mais confiança do B2B para pagar.",
+    rules: [
+      "Comparativo léxico vs NLP disponível para auditoria",
+      "Fórmula do Love Score permanece a mesma; só o cálculo do fator Sentimento muda",
+      "Compatibilidade com dados existentes"
+    ],
+    deps: "Decisão sobre modelo (interno vs OpenAI/Anthropic). Custo variável por volume."
+  },
+  {
+    id: "F3-ATR", phase: "3", phaseLabel: "Fase 3",
+    title: "Extração automática de atributos por IA",
+    tag: "IA & Precisão",
+    summary: "IA lê o depoimento e sugere atributos além dos que o consumidor marcou explicitamente. Evolução do fator Atributos no Love Score.",
+    value: "Reduz atrito na indicação (menos cliques) e aumenta a riqueza dos dados.",
+    rules: [
+      "Consumidor pode aprovar/rejeitar sugestões",
+      "Atributos IA marcados como 'sugeridos' na indicação",
+      "Consumidor final continua no controle"
+    ],
+    deps: "Depende de F3-NLP (mesmo modelo)."
+  },
+  {
+    id: "F3-SELO", phase: "3", phaseLabel: "Fase 3",
+    title: "Selo 'Marca Amada'",
+    tag: "Monetização B2B",
+    summary: "Reconhecimento visual oficial para marcas com Love Score acima de X. Selo aparece na página, pode ser usado no site da marca.",
+    value: "Ativo de marketing gratuito para a marca — ela quer exibir. Cria círculo virtuoso de status.",
+    rules: [
+      "Critério objetivo (ex: Love Score ≥ 90 + mínimo de N indicações)",
+      "Verificação periódica (mensal): perde selo se cair abaixo",
+      "Marca pode baixar arquivos oficiais do selo"
+    ],
+    deps: "Sem dependências técnicas. Requer decisão de negócio sobre critério exato."
+  },
+  {
+    id: "F3-ALRT", phase: "3", phaseLabel: "Fase 3",
+    title: "Alerta B2B para sentimento negativo",
+    tag: "Monetização B2B",
+    summary: "Marca é notificada em tempo real quando recebe indicação com sentimento negativo. Substitui alerta genérico do RF-07.",
+    value: "Marca reage rápido — pode entrar em contato com o consumidor, resolver, transformar detrator em promotor.",
+    rules: [
+      "Só disponível para marcas com plano B2B ativo",
+      "Notificação por e-mail + dashboard",
+      "Não expõe identidade do consumidor (privacidade)"
+    ],
+    deps: "Depende de F3-OB + F3-SUB."
+  },
+  {
+    id: "F3-CAT", phase: "3", phaseLabel: "Fase 3",
+    title: "Catálogo de produtos da marca",
+    tag: "Evolução do Produto",
+    summary: "Página da marca ganha produtos individuais indicáveis. Ex: em vez de indicar 'Cafeteria Grão Fino', indica 'o cappuccino da Cafeteria Grão Fino'.",
+    value: "Granularidade — permite Love Score por produto, não só por marca. Cria universo mais rico para descoberta.",
+    rules: [
+      "Marca cadastra produtos no dashboard B2B",
+      "Consumidor pode indicar marca genericamente ou produto específico",
+      "Love Score do produto herda parcialmente da marca"
+    ],
+    deps: "Depende de F3-DASH (marca precisa gerenciar catálogo)."
+  },
+
+  // ==================== FASE 4 · Admin e Anti-Fraude ====================
+  {
+    id: "RF-12", phase: "4", phaseLabel: "Fase 4",
+    title: "Detecção de fraude, denúncias e clusters",
+    tag: "Segurança & Integridade",
+    summary: "Identifica ring de contas coordenadas, IPs suspeitos, padrões de rede. Evolui a moderação além do RF-11 atual.",
+    value: "Proteção da credibilidade do Love Score. Se ranking puder ser manipulado por fraude, a marca perde confiança do consumidor.",
+    rules: [
+      "Análise por cluster (grafo de relacionamento entre contas)",
+      "Sinais: mesmo IP, mesmo dispositivo, timing coordenado",
+      "Ação automática: quarentena da indicação → moderador humano decide",
+      "Log completo em audit_log (LGPD compliance)"
+    ],
+    deps: "Escala com volume — só faz sentido quando o EQI tiver base grande o suficiente para fraude ser plausível."
+  },
+  {
+    id: "F4-ADM", phase: "4", phaseLabel: "Fase 4",
+    title: "Painel administrativo completo",
+    tag: "Operação",
+    summary: "Visões dedicadas para CEO (KPIs), Financeiro (DRE, MRR/ARR), Customer Success (retenção, NPS), Operações.",
+    value: "Time do EQI para de improvisar planilhas — vê o produto em tempo real. Fundadores tomam decisão com dado.",
+    rules: [
+      "RBAC por papel (CEO, financeiro, CS, operações)",
+      "Métricas: MRR, ARR, churn, LTV, CAC, cohort de retenção",
+      "DRE simplificado com receita B2B - custos operacionais",
+      "Alertas configuráveis (queda de MRR, aumento de churn)"
+    ],
+    deps: "Depende de F3-SUB (assinatura B2B) para existir receita a analisar."
+  },
+  {
+    id: "F4-DEN", phase: "4", phaseLabel: "Fase 4",
+    title: "Sistema de denúncia pelo consumidor",
+    tag: "Segurança & Integridade",
+    summary: "Consumidor pode denunciar indicação suspeita, marca fake ou comportamento abusivo. Feed direto para moderação.",
+    value: "Escala a moderação — comunidade ajuda a policiar o próprio ambiente.",
+    rules: [
+      "Denúncia com categoria (spam, ofensa, fake, outros)",
+      "Rate limit para evitar abuso de denúncia",
+      "Moderação prioriza denúncias com múltiplas confirmações",
+      "Notificação ao denunciante sobre resultado"
+    ],
+    deps: "Depende de RF-11 (moderação) estar estável."
+  },
+  {
+    id: "F4-BAN", phase: "4", phaseLabel: "Fase 4",
+    title: "Banimento avançado + cluster",
+    tag: "Segurança & Integridade",
+    summary: "Moderador pode banir cluster inteiro (não só conta individual). Ferramenta operacional para casos de fraude coordenada.",
+    value: "Reduz tempo de resposta do moderador de 'analisar 20 contas suspeitas' para 'banir o cluster'.",
+    rules: [
+      "Auditoria imutável de todo banimento",
+      "Banimento reversível (log + workflow de recurso)",
+      "Notificação ao(s) banido(s) via e-mail"
+    ],
+    deps: "Depende de RF-12 (detecção de cluster)."
+  },
+
+  // ==================== FASE 5 · White Label, API, Canais ====================
+  {
+    id: "F5-WL", phase: "5", phaseLabel: "Fase 5",
+    title: "Canal White Label",
+    tag: "Expansão",
+    summary: "Marca parceira ou grupo empresarial tem instância própria do EQI com identidade visual dela (logo, cores, domínio).",
+    value: "Modelo de receita alternativo — parceria ao invés de anunciante. Amplia base sem canibalizar.",
+    rules: [
+      "Design tokens configuráveis por instância",
+      "Isolamento de dados (uma instância não vê outra)",
+      "Cobrança por instância + volume de uso"
+    ],
+    deps: "Depende de F3-SUB (modelo de assinatura B2B). Complexidade técnica alta (arquitetura multi-tenant)."
+  },
+  {
+    id: "F5-API", phase: "5", phaseLabel: "Fase 5",
+    title: "API Pública",
+    tag: "Expansão",
+    summary: "Marca ou parceiro acessa Love Score, indicações e dados agregados via REST API. Documentação Swagger, tokens de acesso.",
+    value: "Ecosystem play — marca integra EQI ao próprio site, e-commerce, CRM. Aumenta stickiness.",
+    rules: [
+      "Rate limiting por plano B2B",
+      "OAuth 2.0 para autenticação",
+      "Webhooks para eventos (nova indicação, mudança de Love Score)",
+      "Versionamento (v1, v2) para evolução sem quebrar clientes"
+    ],
+    deps: "Depende de F3-SUB. Requer time dedicado de suporte técnico."
+  },
+  {
+    id: "F5-QR", phase: "5", phaseLabel: "Fase 5",
+    title: "Canal QR Code (loja física → indicação)",
+    tag: "Novo canal",
+    summary: "Marca imprime QR na loja física. Consumidor escaneia → cai direto no wizard de indicação daquela marca (pré-selecionada).",
+    value: "Fecha o loop entre experiência física e indicação digital. Ideal para restaurantes, salões, lojas.",
+    rules: [
+      "URL única por marca (utm + pré-seleção)",
+      "Consumidor sem cadastro é levado a cadastro rápido",
+      "Métricas de conversão do QR disponíveis para marca (Enterprise)"
+    ],
+    deps: "Sem dependência técnica pesada. Bom item para 'quick win' de MVP na Fase 5."
+  },
+  {
+    id: "F5-WA", phase: "5", phaseLabel: "Fase 5",
+    title: "Canal WhatsApp (bot de indicação)",
+    tag: "Novo canal",
+    summary: "Consumidor indica marca via bot no WhatsApp: 'Quero indicar a Cafeteria X' → wizard conversacional.",
+    value: "Alcança consumidor que não usa app/site. Brasil tem 165M de usuários de WhatsApp — canal massivo.",
+    rules: [
+      "WhatsApp Business API (Meta) — custo por conversação",
+      "Bot precisa de aprovação da Meta",
+      "Fallback: sempre linka para web para casos complexos"
+    ],
+    deps: "Requer conta WhatsApp Business API aprovada. Meta cobra por mensagem — custo operacional a mensurar."
+  }
+];
+
+// ============================================
+// ESTADO
+// ============================================
+const STORAGE_KEY = 'eqi-kanban-workflow-v2';
+const COLUMNS = ['backlog', 'priorizada', 'refinamento', 'aguardando', 'aprovada', 'desenvolvimento', 'qa', 'homologacao', 'producao'];
+const COLUMN_NAMES = {
+  backlog: 'Backlog',
+  priorizada: 'Priorizada',
+  refinamento: 'Em refinamento',
+  aguardando: 'Aguardando aprovação',
+  aprovada: 'Aprovada',
+  desenvolvimento: 'Em desenvolvimento',
+  qa: 'QA',
+  homologacao: 'Homologação',
+  producao: 'Em produção'
+};
+let state = loadState();
+let currentFilter = 'all';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  // estado inicial: tudo no backlog
+  const init = {};
+  REQUIREMENTS.forEach(r => init[r.id] = 'backlog');
+  return init;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+// ============================================
+// RENDER
+// ============================================
+function render() {
+  // Limpar todas as colunas
+  document.querySelectorAll('.cards-container').forEach(c => c.innerHTML = '');
+
+  // Renderizar cada requisito na coluna correta
+  REQUIREMENTS.forEach(req => {
+    const col = state[req.id] || 'backlog';
+    if (currentFilter !== 'all' && req.phase !== currentFilter) return;
+
+    const container = document.querySelector(`.cards-container[data-container="${col}"]`);
+    if (!container) return;
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('draggable', 'true');
+    card.dataset.id = req.id;
+
+    const phaseClass = 'phase-' + req.phase.replace('.', '');
+    const currentIdx = COLUMNS.indexOf(state[req.id] || 'backlog');
+    const canBack = currentIdx > 0;
+    const canFwd = currentIdx < COLUMNS.length - 1;
+    const nextColName = canFwd ? COLUMN_NAMES[COLUMNS[currentIdx + 1]] : '';
+    const prevColName = canBack ? COLUMN_NAMES[COLUMNS[currentIdx - 1]] : '';
+
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="card-id">${escapeHtml(req.id)}</span>
+        <span class="card-phase ${phaseClass}">${escapeHtml(req.phaseLabel)}</span>
+      </div>
+      <h3 class="card-title">${escapeHtml(req.title)}</h3>
+      <p class="card-summary">${escapeHtml(req.summary)}</p>
+      <div class="card-nav">
+        <button class="nav-btn nav-back" data-back="${escapeHtml(req.id)}" ${canBack ? '' : 'disabled'} title="${canBack ? 'Voltar para: ' + prevColName : 'Já está no início do fluxo'}" draggable="false">
+          <span class="arrow">←</span> Voltar
+        </button>
+        <button class="nav-btn nav-fwd" data-fwd="${escapeHtml(req.id)}" ${canFwd ? '' : 'disabled'} title="${canFwd ? 'Avançar para: ' + nextColName : 'Já está em produção'}" draggable="false">
+          Avançar <span class="arrow">→</span>
+        </button>
+      </div>
+      <div class="card-foot">
+        <span class="card-tag">${escapeHtml(req.tag)}</span>
+        <button class="card-info" data-id="${escapeHtml(req.id)}">Detalhes →</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  updateCounters();
+  bindDragEvents();
+  bindInfoButtons();
+  bindNavButtons();
+}
+
+function moveCard(id, direction) {
+  const currentIdx = COLUMNS.indexOf(state[id] || 'backlog');
+  const newIdx = currentIdx + direction;
+  if (newIdx < 0 || newIdx >= COLUMNS.length) return;
+  state[id] = COLUMNS[newIdx];
+  saveState();
+  render();
+}
+
+function bindNavButtons() {
+  document.querySelectorAll('.nav-btn[data-back]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      moveCard(btn.dataset.back, -1);
+    });
+  });
+  document.querySelectorAll('.nav-btn[data-fwd]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      moveCard(btn.dataset.fwd, +1);
+    });
+  });
+}
+
+function updateCounters() {
+  COLUMNS.forEach(col => {
+    const count = REQUIREMENTS.filter(r => (state[r.id] || 'backlog') === col).length;
+    const el = document.querySelector(`.count[data-count="${col}"]`);
+    if (el) el.textContent = count;
+  });
+  const total = REQUIREMENTS.length;
+  const inBacklog = REQUIREMENTS.filter(r => (state[r.id] || 'backlog') === 'backlog').length;
+  const inLive = REQUIREMENTS.filter(r => state[r.id] === 'producao').length;
+  const inFlow = total - inBacklog - inLive;
+  document.getElementById('c-total').textContent = total;
+  document.getElementById('c-backlog').textContent = inBacklog;
+  document.getElementById('c-flow').textContent = inFlow;
+  document.getElementById('c-live').textContent = inLive;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ============================================
+// DRAG & DROP
+// ============================================
+function bindDragEvents() {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    card.addEventListener('dragstart', e => {
+      card.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', card.dataset.id);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.column.drop-target').forEach(c => c.classList.remove('drop-target'));
+    });
+  });
+
+  document.querySelectorAll('.column').forEach(col => {
+    col.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      col.classList.add('drop-target');
+    });
+    col.addEventListener('dragleave', e => {
+      // só remover se saiu do próprio col
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drop-target');
+    });
+    col.addEventListener('drop', e => {
+      e.preventDefault();
+      col.classList.remove('drop-target');
+      const id = e.dataTransfer.getData('text/plain');
+      const newCol = col.dataset.col;
+      if (id && newCol && state[id] !== newCol) {
+        state[id] = newCol;
+        saveState();
+        render();
+      }
+    });
+  });
+}
+
+// ============================================
+// MODAL
+// ============================================
+function openModal(id) {
+  const req = REQUIREMENTS.find(r => r.id === id);
+  if (!req) return;
+  const phaseClass = 'phase-' + req.phase.replace('.', '');
+  document.getElementById('modal-meta').innerHTML =
+    `<span class="card-id">${escapeHtml(req.id)}</span>
+     <span class="card-phase ${phaseClass}">${escapeHtml(req.phaseLabel)}</span>
+     <span class="card-tag" style="padding: 2px 8px; background: var(--line-soft); border-radius: 4px; font-size: 10px; font-weight: 700; color: var(--text-soft);">${escapeHtml(req.tag)}</span>`;
+  document.getElementById('modal-title').textContent = req.title;
+  document.getElementById('modal-desc').textContent = req.summary;
+  document.getElementById('modal-value').textContent = req.value;
+  const rulesEl = document.getElementById('modal-rules');
+  rulesEl.innerHTML = req.rules.map(r => `<li>${escapeHtml(r)}</li>`).join('');
+  document.getElementById('modal-deps').textContent = req.deps;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function bindInfoButtons() {
+  document.querySelectorAll('.card-info').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openModal(btn.dataset.id);
+    });
+  });
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ============================================
+// FILTROS
+// ============================================
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    render();
+  });
+});
+
+// ============================================
+// AÇÕES
+// ============================================
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (!confirm('Resetar o kanban? Todos os cards voltam para o Backlog.')) return;
+  REQUIREMENTS.forEach(r => state[r.id] = 'backlog');
+  saveState();
+  render();
+});
+
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+function buildCsv() {
+  const rows = [
+    ['ID', 'Fase', 'Título', 'Categoria', 'Etapa atual', 'Descrição']
+  ];
+  // Exporta na ordem inversa do fluxo (produção primeiro, backlog por último)
+  const exportOrder = ['producao', 'homologacao', 'qa', 'desenvolvimento', 'aprovada', 'aguardando', 'refinamento', 'priorizada', 'backlog'];
+  exportOrder.forEach(col => {
+    REQUIREMENTS
+      .filter(r => (state[r.id] || 'backlog') === col)
+      .forEach(r => {
+        rows.push([
+          r.id, r.phaseLabel, r.title, r.tag, COLUMN_NAMES[col], r.summary
+        ]);
+      });
+  });
+  return rows.map(r => r.map(v => {
+    const s = String(v).replace(/"/g, '""');
+    return `"${s}"`;
+  }).join(',')).join('\n');
+}
+
+function openExportModal() {
+  document.getElementById('csv-output').value = buildCsv();
+  document.getElementById('copy-feedback').style.opacity = '0';
+  document.getElementById('export-modal').classList.add('open');
+}
+
+function closeExportModal() {
+  document.getElementById('export-modal').classList.remove('open');
+}
+
+document.getElementById('btn-export').addEventListener('click', openExportModal);
+
+document.getElementById('export-modal').addEventListener('click', e => {
+  if (e.target.id === 'export-modal') closeExportModal();
+});
+
+document.getElementById('btn-copy-csv').addEventListener('click', async () => {
+  const csv = document.getElementById('csv-output').value;
+  const feedback = document.getElementById('copy-feedback');
+  try {
+    await navigator.clipboard.writeText(csv);
+    feedback.style.opacity = '1';
+    setTimeout(() => { feedback.style.opacity = '0'; }, 2400);
+  } catch (err) {
+    // fallback: seleciona o textarea para o usuário copiar manualmente
+    const ta = document.getElementById('csv-output');
+    ta.focus();
+    ta.select();
+    feedback.textContent = '⚠ Copie manualmente com Ctrl/Cmd+C';
+    feedback.style.opacity = '1';
+  }
+});
+
+// ============================================
+// INICIALIZAR
+// ============================================
+render();
+</script>
+
+</body>
+</html>
